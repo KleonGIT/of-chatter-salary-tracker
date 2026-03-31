@@ -2,11 +2,9 @@ import { defineConfig } from "drizzle-kit";
 import path from "path";
 import { config as loadEnv } from "dotenv";
 
-// Load .env from the project root (two levels up from lib/db)
-loadEnv({ path: path.resolve(__dirname, "../../.env") });
-// Fallback: also try the current working directory
-loadEnv({ path: path.resolve(process.cwd(), "../../.env"), override: false });
-loadEnv({ override: false });
+// Load .env — try multiple locations so it works wherever the command is run from
+loadEnv({ path: path.join(process.cwd(), "../../.env") });
+loadEnv({ path: path.join(process.cwd(), ".env"), override: false });
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
@@ -15,7 +13,7 @@ if (!process.env.DATABASE_URL) {
 }
 
 export default defineConfig({
-  schema: path.join(__dirname, "./src/schema/index.ts"),
+  schema: "./src/schema/index.ts",
   dialect: "postgresql",
   dbCredentials: {
     url: process.env.DATABASE_URL,
