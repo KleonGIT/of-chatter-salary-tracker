@@ -111,7 +111,19 @@ Now you need to create a database for the app to store data in.
 - **Mac:** Open Terminal and type `psql postgres`
 - **Linux:** Open Terminal and type `sudo -u postgres psql`
 
-It will ask for the password you set during PostgreSQL installation. Type it and press Enter (you won't see the characters — that's normal).
+**On Windows, SQL Shell will ask you several questions when it opens. Here's what to enter:**
+
+| Prompt it shows | What to do |
+|---|---|
+| `Server [localhost]:` | Press **Enter** (just leave it blank) |
+| `Database [postgres]:` | Press **Enter** (just leave it blank) |
+| `Port [5432]:` | Press **Enter** (just leave it blank) |
+| `Username [postgres]:` | Press **Enter** (just leave it blank) |
+| `Password for user postgres:` | Type the **password you set when you installed PostgreSQL**, then press Enter |
+
+You won't see any characters appear when you type the password — that's normal, it's hidden for security. Just type it and press Enter.
+
+Once it works, you'll see a prompt that looks like `postgres=#` — you're in!
 
 ### Run these commands one at a time
 
@@ -175,6 +187,10 @@ pnpm install
 ```
 
 This downloads everything the app needs to run. It might take 1–3 minutes. You'll see a lot of text scrolling — that's normal. Wait until it stops and you see your cursor again.
+
+> **Windows users:** You might see a warning about `@esbuild/win32-x64` during the install — this is harmless and fixes itself automatically. Just wait for it to finish.
+>
+> If you see an error saying `'sh' is not recognized`, you have an old version of the archive. Re-download the latest version from GitHub or the download link and try again.
 
 ---
 
@@ -298,6 +314,11 @@ To **start it again**, repeat Step 6 (open two terminals and run both commands a
 ---
 
 ## Troubleshooting
+
+### `'sh' is not recognized as an internal or external command` during `pnpm install`
+This happens on Windows with older versions of the archive. The project had a startup script that used a Mac/Linux-only command (`sh`) which Windows doesn't have.
+
+**Fix:** Re-download the latest archive from GitHub or the download link — this has already been fixed. Delete the old folder, extract the new one, and run `pnpm install` again.
 
 ### "I see an error about DATABASE_URL"
 Your `.env` file is missing or has a typo. Check:
