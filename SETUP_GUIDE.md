@@ -188,6 +188,10 @@ pnpm install
 
 This downloads everything the app needs to run. It might take 1–3 minutes. You'll see a lot of text scrolling — that's normal. Wait until it stops and you see your cursor again.
 
+> **Windows users:** You might see a warning about `@esbuild/win32-x64` during the install — this is harmless and fixes itself automatically. Just wait for it to finish.
+>
+> If you see an error saying `'sh' is not recognized`, you have an old version of the archive. Re-download the latest version from GitHub or the download link and try again.
+
 ---
 
 ## Step 5 — Set Up the Database Tables
@@ -310,6 +314,11 @@ To **start it again**, repeat Step 6 (open two terminals and run both commands a
 ---
 
 ## Troubleshooting
+
+### `'sh' is not recognized as an internal or external command` during `pnpm install`
+This happens on Windows with older versions of the archive. The project had a startup script that used a Mac/Linux-only command (`sh`) which Windows doesn't have.
+
+**Fix:** Re-download the latest archive from GitHub or the download link — this has already been fixed. Delete the old folder, extract the new one, and run `pnpm install` again.
 
 ### "I see an error about DATABASE_URL"
 Your `.env` file is missing or has a typo. Check:
