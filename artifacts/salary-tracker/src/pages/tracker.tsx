@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { useAuth } from "@workspace/replit-auth-web";
 import { useSettings } from "@/contexts/settings";
 import {
   DAYS_OF_WEEK,
@@ -54,8 +55,13 @@ export default function TrackerPage({ editId }: TrackerPageProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { settings } = useSettings();
+  const { user } = useAuth();
 
-  const [chatterName, setChatterName] = useState("");
+  const defaultName = user
+    ? [user.firstName, user.lastName].filter(Boolean).join(" ") || user.id
+    : "";
+
+  const [chatterName, setChatterName] = useState(defaultName);
   const [weekLabel, setWeekLabel] = useState("");
   const [weekStart, setWeekStart] = useState("");
   const [days, setDays] = useState<DayEntry[]>(createEmptyWeek());
@@ -79,6 +85,12 @@ export default function TrackerPage({ editId }: TrackerPageProps) {
       }
     }
   }, [editId, weeksData]);
+
+  useEffect(() => {
+    if (!editId && defaultName) {
+      setChatterName((prev) => (prev ? prev : defaultName));
+    }
+  }, [defaultName, editId]);
 
   const createMutation = useCreateWeek({
     mutation: {
