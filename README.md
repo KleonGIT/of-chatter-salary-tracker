@@ -1,0 +1,3 @@
+# OF Chatter Salary Tracker
+
+Initializing...
