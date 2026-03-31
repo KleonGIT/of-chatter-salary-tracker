@@ -111,7 +111,19 @@ Now you need to create a database for the app to store data in.
 - **Mac:** Open Terminal and type `psql postgres`
 - **Linux:** Open Terminal and type `sudo -u postgres psql`
 
-It will ask for the password you set during PostgreSQL installation. Type it and press Enter (you won't see the characters — that's normal).
+**On Windows, SQL Shell will ask you several questions when it opens. Here's what to enter:**
+
+| Prompt it shows | What to do |
+|---|---|
+| `Server [localhost]:` | Press **Enter** (just leave it blank) |
+| `Database [postgres]:` | Press **Enter** (just leave it blank) |
+| `Port [5432]:` | Press **Enter** (just leave it blank) |
+| `Username [postgres]:` | Press **Enter** (just leave it blank) |
+| `Password for user postgres:` | Type the **password you set when you installed PostgreSQL**, then press Enter |
+
+You won't see any characters appear when you type the password — that's normal, it's hidden for security. Just type it and press Enter.
+
+Once it works, you'll see a prompt that looks like `postgres=#` — you're in!
 
 ### Run these commands one at a time
 
