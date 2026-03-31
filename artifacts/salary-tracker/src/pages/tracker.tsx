@@ -57,9 +57,7 @@ export default function TrackerPage({ editId }: TrackerPageProps) {
   const { settings } = useSettings();
   const { user } = useAuth();
 
-  const defaultName = user
-    ? [user.firstName, user.lastName].filter(Boolean).join(" ") || user.id
-    : "";
+  const defaultName = user?.username || "";
 
   const [chatterName, setChatterName] = useState(defaultName);
   const [weekLabel, setWeekLabel] = useState("");

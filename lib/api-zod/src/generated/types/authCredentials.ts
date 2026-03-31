@@ -6,8 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface AuthUser {
-  id: string;
+export interface AuthCredentials {
+  /** @minLength 3 */
   username: string;
-  isAdmin: boolean;
+  /** @minLength 6 */
+  password: string;
 }

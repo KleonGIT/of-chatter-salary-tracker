@@ -27,9 +27,7 @@ router.get("/admin/users", requireAdmin, async (req: Request, res: Response) => 
 
   const result = users.map((u) => ({
     id: u.id,
-    email: u.email,
-    firstName: u.firstName,
-    lastName: u.lastName,
+    username: u.username,
     isAdmin: u.isAdmin === "true",
     createdAt: u.createdAt.toISOString(),
     weekCount: countMap.get(u.id) ?? 0,
@@ -48,9 +46,7 @@ router.get("/admin/weeks", requireAdmin, async (req: Request, res: Response) => 
       days: weekRecordsTable.days,
       createdAt: weekRecordsTable.createdAt,
       userId: weekRecordsTable.userId,
-      userEmail: usersTable.email,
-      userFirstName: usersTable.firstName,
-      userLastName: usersTable.lastName,
+      userUsername: usersTable.username,
     })
     .from(weekRecordsTable)
     .leftJoin(usersTable, eq(weekRecordsTable.userId, usersTable.id))

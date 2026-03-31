@@ -9,11 +9,7 @@
 export interface AdminUserRecord {
   id: string;
   /** @nullable */
-  email: string | null;
-  /** @nullable */
-  firstName: string | null;
-  /** @nullable */
-  lastName: string | null;
+  username: string | null;
   isAdmin: boolean;
   createdAt: string;
   weekCount: number;

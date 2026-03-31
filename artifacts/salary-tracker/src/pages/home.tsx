@@ -122,7 +122,7 @@ export default function HomePage() {
               <Plus className="h-4 w-4" />
               New Week
             </Button>
-            <Button variant="ghost" size="icon" onClick={logout} data-testid="button-logout" title="Log out">
+            <Button variant="ghost" size="icon" onClick={() => logout()} data-testid="button-logout" title="Log out">
               <LogOut className="h-4 w-4 text-muted-foreground" />
             </Button>
           </div>

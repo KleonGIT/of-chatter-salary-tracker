@@ -16,9 +16,5 @@ export interface AdminWeekRecord {
   createdAt: string;
   userId: string;
   /** @nullable */
-  userEmail: string | null;
-  /** @nullable */
-  userFirstName: string | null;
-  /** @nullable */
-  userLastName: string | null;
+  userUsername: string | null;
 }

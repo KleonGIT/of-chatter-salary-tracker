@@ -42,103 +42,68 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthUserEnvelope'
-  /login:
-    get:
-      tags: [Auth]
-      operationId: beginBrowserLogin
-      summary: Start the browser OIDC login flow
-      parameters:
-        - name: returnTo
-          in: query
-          required: false
-          description: Relative path to redirect to after login (must start with `/`). Defaults to `/`.
-          schema:
-            type: string
-      responses:
-        '302':
-          description: Redirect to the OIDC authorization endpoint.
-  /callback:
-    get:
-      tags: [Auth]
-      operationId: handleBrowserLoginCallback
-      summary: Complete the browser OIDC login flow
-      parameters:
-        - name: code
-          in: query
-          required: false
-          schema:
-            type: string
-        - name: state
-          in: query
-          required: false
-          schema:
-            type: string
-        - name: iss
-          in: query
-          required: false
-          schema:
-            type: string
-            format: uri
-      responses:
-        '302':
-          description: Redirect to the returnTo path on success or /api/login on failure.
-  /logout:
-    get:
-      tags: [Auth]
-      operationId: logoutBrowserSession
-      summary: Clear the session and begin OIDC logout
-      parameters:
-        - $ref: '#/components/parameters/AuthorizationSessionHeader'
-        - $ref: '#/components/parameters/SessionCookie'
-      responses:
-        '302':
-          description: Redirect to the OIDC provider logout URL.
-  /mobile-auth/token-exchange:
+  /auth/register:
     post:
       tags: [Auth]
-      operationId: exchangeMobileAuthorizationCode
-      summary: Exchange a mobile OIDC code for a session token
+      operationId: registerUser
+      summary: Register a new user account
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MobileTokenExchangeRequest'
+              $ref: '#/components/schemas/AuthCredentials'
       responses:
-        '200':
-          description: Session created successfully.
+        '201':
+          description: Account created and session started.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MobileTokenExchangeSuccess'
+                $ref: '#/components/schemas/AuthUserEnvelope'
         '400':
-          description: Missing or invalid required fields.
+          description: Validation error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
-        '401':
-          description: Token did not contain usable claims.
+        '409':
+          description: Username already taken.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
-        '500':
-          description: Token exchange failed.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorEnvelope'
-  /mobile-auth/logout:
+  /auth/login:
     post:
       tags: [Auth]
-      operationId: logoutMobileSession
-      summary: Delete a mobile session token
-      parameters:
-        - $ref: '#/components/parameters/AuthorizationSessionHeader'
+      operationId: loginUser
+      summary: Log in with username and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthCredentials'
       responses:
         '200':
-          description: Logout processed.
+          description: Logged in successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthUserEnvelope'
+        '401':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/logout:
+    post:
+      tags: [Auth]
+      operationId: logoutUser
+      summary: Log out and clear session
+      responses:
+        '200':
+          description: Logged out.
           content:
             application/json:
               schema:
@@ -273,26 +238,29 @@ components:
           type: string
       required:
         - status
+    AuthCredentials:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          minLength: 3
+        password:
+          type: string
+          minLength: 6
     AuthUser:
       type: object
-      required: [id, email, firstName, lastName, profileImageUrl, isAdmin]
+      required: [id, username, isAdmin]
       properties:
         id:
           type: string
-        email:
-          type: [string, 'null']
-          format: email
-        firstName:
-          type: [string, 'null']
-        lastName:
-          type: [string, 'null']
-        profileImageUrl:
-          type: [string, 'null']
+        username:
+          type: string
         isAdmin:
           type: boolean
     AdminWeekRecord:
       type: object
-      required: [id, label, chatterName, weekStart, days, createdAt, userId, userEmail, userFirstName, userLastName]
+      required: [id, label, chatterName, weekStart, days, createdAt, userId, userUsername]
       properties:
         id:
           type: string
@@ -310,11 +278,7 @@ components:
           type: string
         userId:
           type: string
-        userEmail:
-          type: [string, 'null']
-        userFirstName:
-          type: [string, 'null']
-        userLastName:
+        userUsername:
           type: [string, 'null']
     AdminWeekList:
       type: object
@@ -326,15 +290,11 @@ components:
             $ref: '#/components/schemas/AdminWeekRecord'
     AdminUserRecord:
       type: object
-      required: [id, email, firstName, lastName, isAdmin, createdAt, weekCount]
+      required: [id, username, isAdmin, createdAt, weekCount]
       properties:
         id:
           type: string
-        email:
-          type: [string, 'null']
-        firstName:
-          type: [string, 'null']
-        lastName:
+        username:
           type: [string, 'null']
         isAdmin:
           type: boolean

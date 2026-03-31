@@ -9,16 +9,16 @@ export interface HealthStatus {
   status: string;
 }
 
+export interface AuthCredentials {
+  /** @minLength 3 */
+  username: string;
+  /** @minLength 6 */
+  password: string;
+}
+
 export interface AuthUser {
   id: string;
-  /** @nullable */
-  email: string | null;
-  /** @nullable */
-  firstName: string | null;
-  /** @nullable */
-  lastName: string | null;
-  /** @nullable */
-  profileImageUrl: string | null;
+  username: string;
   isAdmin: boolean;
 }
 
@@ -37,11 +37,7 @@ export interface AdminWeekRecord {
   createdAt: string;
   userId: string;
   /** @nullable */
-  userEmail: string | null;
-  /** @nullable */
-  userFirstName: string | null;
-  /** @nullable */
-  userLastName: string | null;
+  userUsername: string | null;
 }
 
 export interface AdminWeekList {
@@ -51,11 +47,7 @@ export interface AdminWeekList {
 export interface AdminUserRecord {
   id: string;
   /** @nullable */
-  email: string | null;
-  /** @nullable */
-  firstName: string | null;
-  /** @nullable */
-  lastName: string | null;
+  username: string | null;
   isAdmin: boolean;
   createdAt: string;
   weekCount: number;
@@ -119,16 +111,3 @@ export interface CreateWeekRequest {
  * Opaque session token — `Bearer <sid>`.
  */
 export type AuthorizationSessionHeaderParameter = string;
-
-export type BeginBrowserLoginParams = {
-  /**
-   * Relative path to redirect to after login (must start with `/`). Defaults to `/`.
-   */
-  returnTo?: string;
-};
-
-export type HandleBrowserLoginCallbackParams = {
-  code?: string;
-  state?: string;
-  iss?: string;
-};

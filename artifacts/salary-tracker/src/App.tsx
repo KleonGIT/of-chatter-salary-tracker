@@ -9,16 +9,51 @@ import HomePage from "@/pages/home";
 import TrackerPage from "@/pages/tracker";
 import AdminPage from "@/pages/admin";
 import { Button } from "@/components/ui/button";
-import { DollarSign, LogIn, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { DollarSign, LogIn, UserPlus, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const queryClient = new QueryClient();
 
 function LoginPage() {
-  const { login } = useAuth();
+  const { login, register } = useAuth();
+  const { toast } = useToast();
+  const [mode, setMode] = useState<"login" | "register">("login");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (mode === "register" && password !== confirm) {
+      toast({ title: "Passwords don't match", variant: "destructive" });
+      return;
+    }
+    setIsLoading(true);
+    try {
+      if (mode === "login") {
+        await login(username.trim(), password);
+      } else {
+        await register(username.trim(), password);
+      }
+    } catch (err: unknown) {
+      toast({
+        title: mode === "login" ? "Login failed" : "Registration failed",
+        description: err instanceof Error ? err.message : "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <div className="w-full max-w-sm text-center space-y-6">
-        <div className="flex flex-col items-center gap-3">
+      <div className="w-full max-w-sm space-y-6">
+        <div className="flex flex-col items-center gap-3 text-center">
           <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center shadow-lg">
             <DollarSign className="h-9 w-9 text-primary-foreground" />
           </div>
@@ -28,37 +63,101 @@ function LoginPage() {
           </div>
         </div>
 
-        <div className="bg-card border border-card-border rounded-2xl p-6 space-y-4 shadow-sm">
-          <div className="space-y-2 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-              <span>Track daily net sales per shift</span>
+        <div className="bg-card border border-border rounded-2xl p-6 shadow-sm space-y-4">
+          <h2 className="text-base font-semibold text-center">
+            {mode === "login" ? "Sign in to your account" : "Create an account"}
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="username" className="text-sm">Username</Label>
+              <Input
+                id="username"
+                type="text"
+                autoComplete="username"
+                placeholder="e.g. kleon"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                disabled={isLoading}
+                required
+                data-testid="input-username"
+              />
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-              <span>Auto-calculate base pay + commission</span>
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-sm">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                autoComplete={mode === "login" ? "current-password" : "new-password"}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+                required
+                data-testid="input-password"
+              />
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-              <span>Your data saved securely to your account</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-              <span>Share with teammates, each sees only their own</span>
-            </div>
+            {mode === "register" && (
+              <div className="space-y-1.5">
+                <Label htmlFor="confirm" className="text-sm">Confirm Password</Label>
+                <Input
+                  id="confirm"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  disabled={isLoading}
+                  required
+                  data-testid="input-confirm-password"
+                />
+              </div>
+            )}
+            <Button
+              type="submit"
+              className="w-full gap-2 h-11 text-base font-semibold"
+              disabled={isLoading}
+              data-testid="button-submit-auth"
+            >
+              {isLoading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : mode === "login" ? (
+                <LogIn className="h-5 w-5" />
+              ) : (
+                <UserPlus className="h-5 w-5" />
+              )}
+              {isLoading ? "Please wait…" : mode === "login" ? "Sign In" : "Create Account"}
+            </Button>
+          </form>
+          <div className="text-center text-sm text-muted-foreground">
+            {mode === "login" ? (
+              <>
+                No account?{" "}
+                <button
+                  onClick={() => { setMode("register"); setPassword(""); setConfirm(""); }}
+                  className="text-primary font-medium hover:underline"
+                  data-testid="button-switch-register"
+                >
+                  Create one
+                </button>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <button
+                  onClick={() => { setMode("login"); setPassword(""); setConfirm(""); }}
+                  className="text-primary font-medium hover:underline"
+                  data-testid="button-switch-login"
+                >
+                  Sign in
+                </button>
+              </>
+            )}
           </div>
-          <Button
-            onClick={login}
-            className="w-full gap-2 h-11 text-base font-semibold"
-            data-testid="button-login"
-          >
-            <LogIn className="h-5 w-5" />
-            Log in to get started
-          </Button>
         </div>
 
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground text-center">
           Your data is private — only you can see your own records.
+          {mode === "register" && <><br /><span className="text-primary">The first account created will be the admin.</span></>}
         </p>
       </div>
     </div>

@@ -27,9 +27,7 @@ import {
 
 interface AdminUser {
   id: string;
-  email: string | null;
-  firstName: string | null;
-  lastName: string | null;
+  username: string | null;
   isAdmin: boolean;
   createdAt: string;
   weekCount: number;
@@ -43,9 +41,7 @@ interface AdminWeek {
   days: DayEntry[];
   createdAt: string;
   userId: string;
-  userEmail: string | null;
-  userFirstName: string | null;
-  userLastName: string | null;
+  userUsername: string | null;
 }
 
 export default function AdminPage() {
@@ -117,12 +113,7 @@ export default function AdminPage() {
 
   const filteredUsers = users.filter((u) => {
     const q = search.toLowerCase();
-    return (
-      !q ||
-      u.email?.toLowerCase().includes(q) ||
-      u.firstName?.toLowerCase().includes(q) ||
-      u.lastName?.toLowerCase().includes(q)
-    );
+    return !q || u.username?.toLowerCase().includes(q);
   });
 
   const totalEarnings = weeks.reduce((sum, w) => {
@@ -139,8 +130,7 @@ export default function AdminPage() {
   }
 
   function getUserDisplayName(u: AdminUser) {
-    if (u.firstName || u.lastName) return `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim();
-    return u.email ?? u.id.slice(0, 8);
+    return u.username ?? u.id.slice(0, 8);
   }
 
   return (
@@ -226,7 +216,7 @@ export default function AdminPage() {
               <div className="relative max-w-xs w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by name or email…"
+                  placeholder="Search by username…"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-9"
@@ -263,7 +253,7 @@ export default function AdminPage() {
                         onClick={() => toggleExpand(u.id)}
                       >
                         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 font-bold text-primary text-sm">
-                          {(u.firstName?.[0] ?? u.email?.[0] ?? "?").toUpperCase()}
+                          {(u.username?.[0] ?? "?").toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
@@ -274,7 +264,7 @@ export default function AdminPage() {
                               </Badge>
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground truncate">{u.email ?? "No email"}</p>
+                          <p className="text-sm text-muted-foreground truncate">@{u.username ?? u.id.slice(0, 8)}</p>
                         </div>
                         <div className="text-right hidden sm:block">
                           <p className="text-xs text-muted-foreground">{u.weekCount} week{u.weekCount !== 1 ? "s" : ""}</p>
