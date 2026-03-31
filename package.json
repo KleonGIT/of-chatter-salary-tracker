@@ -15,5 +15,11 @@
   },
   "dependencies": {
     "@replit/connectors-sdk": "^0.3.0"
+  },
+  "pnpm": {
+    "supportedArchitectures": {
+      "os": ["linux", "win32", "darwin"],
+      "cpu": ["x64", "arm64"]
+    }
   }
 }
