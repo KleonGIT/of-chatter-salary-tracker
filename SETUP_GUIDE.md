@@ -186,11 +186,9 @@ Open your terminal, make sure you're inside the project folder, then run:
 pnpm install
 ```
 
-This downloads everything the app needs to run. It might take 1–3 minutes. You'll see a lot of text scrolling — that's normal. Wait until it stops and you see your cursor again.
+This downloads everything the app needs to run. **The first time may take 3–5 minutes** — it's resolving and downloading all packages for your operating system. You'll see a lot of text scrolling — that's normal. Wait until it stops and you see your cursor again.
 
-> **Windows users:** You might see a warning about `@esbuild/win32-x64` during the install — this is harmless and fixes itself automatically. Just wait for it to finish.
->
-> If you see an error saying `'sh' is not recognized`, you have an old version of the archive. Re-download the latest version from GitHub or the download link and try again.
+> **Windows users:** pnpm will detect that you're on Windows and automatically download the correct Windows versions of all build tools. This is why the first install takes a few minutes — it's downloading ~200 packages. This is normal and only happens once.
 
 ---
 
