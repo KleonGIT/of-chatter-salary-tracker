@@ -315,6 +315,18 @@ To **start it again**, repeat Step 6 (open two terminals and run both commands a
 
 ## Troubleshooting
 
+### `DATABASE_URL, ensure the database is provisioned` when running `pnpm run push`
+This means the app couldn't find your `.env` file. Check these things:
+
+1. **Your `.env` file must be in the main project folder** — not inside `lib/db`, not inside any subfolder. It belongs at the top level next to `pnpm-workspace.yaml`.
+2. **The file must be named exactly `.env`** — on Windows, Notepad sometimes saves it as `.env.txt`. To check: open File Explorer, turn on "Show file extensions" (View → check "File name extensions"), and verify there's no `.txt` at the end.
+3. **The file must contain the correct DATABASE_URL** — open it in Notepad and make sure it looks like:
+   ```
+   DATABASE_URL=postgresql://tracker_user:YourPassword@localhost:5432/salary_tracker
+   ```
+
+If everything looks correct and it still fails, re-download the latest archive — a fix has been applied that automatically loads `.env` from the project root.
+
 ### `'sh' is not recognized as an internal or external command` during `pnpm install`
 This happens on Windows with older versions of the archive. The project had a startup script that used a Mac/Linux-only command (`sh`) which Windows doesn't have.
 
