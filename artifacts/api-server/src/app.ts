@@ -38,10 +38,20 @@ app.use("/api", router);
 
 app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   logger.error({ err }, "Unhandled error");
-  const message =
-    process.env.NODE_ENV === "development"
-      ? err.message
-      : "Internal server error";
+
+  let message = "Internal server error";
+  if (process.env.NODE_ENV === "development") {
+    const cause = (err as { cause?: unknown }).cause;
+    const causeMsg = cause instanceof Error ? ` — caused by: ${cause.message}` : "";
+    message = err.message + causeMsg;
+
+    const pgCode = (cause as { code?: string } | undefined)?.code;
+    if (pgCode === "42P01") {
+      message =
+        "Database tables are missing. Run `pnpm run push` in the project root to create them, then restart the API server.";
+    }
+  }
+
   res.status(500).json({ error: message });
 });
 
